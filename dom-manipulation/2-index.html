@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quote Generator</title>
+</head>
+<body>
+  <h1>Dynamic Quote Generator</h1>
+
+  <!-- Category Selection -->
+  <div>
+    <label for="categorySelect">Select Category:</label>
+    <select id="categorySelect"></select>
+  </div>
+
+  <!-- Quote Display Area -->
+  <div id="quoteDisplay" style="margin: 20px 0; font-size: 1.2rem; font-weight: bold;">
+    Click "Show New Quote" to begin!
+  </div>
+
+  <!-- Buttons -->
+  <button id="newQuote">Show New Quote</button>
+
+  <!-- Add New Quote Section -->
+  <h3>Add a New Quote</h3>
+  <div>
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button onclick="addQuote()">Add Quote</button>
+  </div>
+
+  <h2>Import and Export Json File</h2>
+  <div>
+    <button id="exportbtn">Export Json File</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="2-script.js"></script>
+</body>
+</html>
