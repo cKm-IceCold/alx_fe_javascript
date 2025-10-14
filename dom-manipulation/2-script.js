@@ -17,6 +17,7 @@ function loadQuotes() {
 }
 
 // Save quotes to localStorage
+
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
