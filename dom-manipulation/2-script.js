@@ -72,7 +72,7 @@ function exportToJsonFile() {
   document.body.removeChild(a);
 }
 
-// Import quotes from JSON file
+// Import quotes from JSON files
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
   fileReader.onload = function (event) {
