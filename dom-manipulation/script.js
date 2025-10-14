@@ -9,10 +9,45 @@ const quotes = [
 // === Step 2: Get DOM elements ===
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
-const addQuoteBtn = document.getElementById("addQuoteBtn");
-const categoryFilter = document.getElementById("categoryFilter");
 
-// === Step 3: Populate category dropdown dynamically ===
+// === Step 3: Create the Add Quote Form dynamically ===
+function createAddQuoteForm() {
+  // Create form container
+  const formContainer = document.createElement("div");
+  formContainer.id = "addQuoteForm";
+
+  // Create text input
+  const textInput = document.createElement("input");
+  textInput.id = "newQuoteText";
+  textInput.type = "text";
+  textInput.placeholder = "Enter a new quote";
+
+  // Create category input
+  const categoryInput = document.createElement("input");
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.type = "text";
+  categoryInput.placeholder = "Enter quote category";
+
+  // Create add button
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "Add Quote";
+  addBtn.addEventListener("click", addQuote);
+
+  // Append all to formContainer
+  formContainer.appendChild(textInput);
+  formContainer.appendChild(categoryInput);
+  formContainer.appendChild(addBtn);
+
+  // Append to body (or any container you like)
+  document.body.appendChild(formContainer);
+}
+
+// === Step 4: Create category dropdown ===
+const categoryFilter = document.createElement("select");
+categoryFilter.id = "categoryFilter";
+document.body.insertBefore(categoryFilter, newQuoteBtn);
+
+// === Step 5: Populate category dropdown dynamically ===
 function updateCategoryFilter() {
   const categories = ["all", ...new Set(quotes.map(q => q.category))];
   categoryFilter.innerHTML = "";
@@ -24,7 +59,7 @@ function updateCategoryFilter() {
   });
 }
 
-// === Step 4: Function to display a random quote ===
+// === Step 6: Function to display a random quote ===
 function showRandomQuote() {
   const selectedCategory = categoryFilter.value;
   let filteredQuotes = quotes;
@@ -46,7 +81,7 @@ function showRandomQuote() {
   }
 }
 
-// === Step 5: Function to add a new quote dynamically ===
+// === Step 7: Function to add a new quote dynamically ===
 function addQuote() {
   const textInput = document.getElementById("newQuoteText");
   const categoryInput = document.getElementById("newQuoteCategory");
@@ -56,7 +91,7 @@ function addQuote() {
 
   if (text && category) {
     quotes.push({ text, category });
-    updateCategoryFilter(); // update categories list
+    updateCategoryFilter();
     alert("Quote added successfully!");
     textInput.value = "";
     categoryInput.value = "";
@@ -65,11 +100,11 @@ function addQuote() {
   }
 }
 
-// === Step 6: Event listeners ===
+// === Step 8: Event Listeners ===
 newQuoteBtn.addEventListener("click", showRandomQuote);
-addQuoteBtn.addEventListener("click", addQuote);
 categoryFilter.addEventListener("change", showRandomQuote);
 
-// === Step 7: Initialize on load ===
+// === Step 9: Initialize on load ===
 updateCategoryFilter();
+createAddQuoteForm();
 showRandomQuote();
