@@ -11,23 +11,25 @@ const quotes = [
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteButton = document.getElementById("newQuote");
 
-// Step 3: Function to show a random quote
-function showRandomQuote() {
-  // Pick a random quote from the quotes array
+// Step 3: Function to display a random quote (uses innerHTML)
+function displayRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
 
-  // Display quote text and category in the page
-  quoteDisplay.textContent = `"${randomQuote.text}" — (${randomQuote.category})`;
+  // Use innerHTML so we can include simple HTML formatting
+  quoteDisplay.innerHTML = `
+    <p>"${randomQuote.text}"</p>
+    <p><em>Category:</em> ${randomQuote.category}</p>
+  `;
 }
 
-// Step 4: Show a quote when the button is clicked
-newQuoteButton.addEventListener("click", showRandomQuote);
+// Step 4: Add event listener to the "Show New Quote" button
+newQuoteButton.addEventListener("click", displayRandomQuote);
 
-// Step 5: Optionally show an initial quote when page loads
-document.addEventListener("DOMContentLoaded", showRandomQuote);
+// Step 5: Display one quote when the page first loads
+document.addEventListener("DOMContentLoaded", displayRandomQuote);
 
-// Step 6: Function to add new quotes dynamically
+// Step 6: Function to add new quotes
 function addQuote() {
   const newQuoteText = document.getElementById("newQuoteText").value.trim();
   const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
@@ -37,11 +39,8 @@ function addQuote() {
     return;
   }
 
-  // Add new quote to the array
-  quotes.push({
-    text: newQuoteText,
-    category: newQuoteCategory
-  });
+  // Add the new quote object to the array
+  quotes.push({ text: newQuoteText, category: newQuoteCategory });
 
   alert("Quote added successfully!");
   document.getElementById("newQuoteText").value = "";
