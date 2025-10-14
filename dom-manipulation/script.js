@@ -1,48 +1,75 @@
-// Step 1: Create an array of quote objects with text and category properties
+// === Step 1: Create an array of quote objects ===
 const quotes = [
-  { text: "The best way to predict the future is to create it.", category: "Motivation" },
-  { text: "Do what you can, with what you have, where you are.", category: "Inspiration" },
-  { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Life" },
-  { text: "Your limitation—it’s only your imagination.", category: "Motivation" },
-  { text: "Happiness depends upon ourselves.", category: "Philosophy" }
+  { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
+  { text: "Success is not the key to happiness. Happiness is the key to success.", category: "Inspiration" },
+  { text: "Don’t watch the clock; do what it does. Keep going.", category: "Motivation" },
+  { text: "Your time is limited, so don’t waste it living someone else’s life.", category: "Life" }
 ];
 
-// Step 2: Select DOM elements
+// === Step 2: Get DOM elements ===
 const quoteDisplay = document.getElementById("quoteDisplay");
-const newQuoteButton = document.getElementById("newQuote");
+const newQuoteBtn = document.getElementById("newQuote");
+const addQuoteBtn = document.getElementById("addQuoteBtn");
+const categoryFilter = document.getElementById("categoryFilter");
 
-// Step 3: Function to display a random quote (uses innerHTML)
-function displayRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
-
-  // Use innerHTML so we can include simple HTML formatting
-  quoteDisplay.innerHTML = `
-    <p>"${randomQuote.text}"</p>
-    <p><em>Category:</em> ${randomQuote.category}</p>
-  `;
+// === Step 3: Populate category dropdown dynamically ===
+function updateCategoryFilter() {
+  const categories = ["all", ...new Set(quotes.map(q => q.category))];
+  categoryFilter.innerHTML = "";
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
 }
 
-// Step 4: Add event listener to the "Show New Quote" button
-newQuoteButton.addEventListener("click", displayRandomQuote);
+// === Step 4: Function to display a random quote ===
+function showRandomQuote() {
+  const selectedCategory = categoryFilter.value;
+  let filteredQuotes = quotes;
 
-// Step 5: Display one quote when the page first loads
-document.addEventListener("DOMContentLoaded", displayRandomQuote);
-
-// Step 6: Function to add new quotes
-function addQuote() {
-  const newQuoteText = document.getElementById("newQuoteText").value.trim();
-  const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
-
-  if (newQuoteText === "" || newQuoteCategory === "") {
-    alert("Please enter both a quote and a category!");
-    return;
+  if (selectedCategory !== "all") {
+    filteredQuotes = quotes.filter(q => q.category === selectedCategory);
   }
 
-  // Add the new quote object to the array
-  quotes.push({ text: newQuoteText, category: newQuoteCategory });
+  const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+  const randomQuote = filteredQuotes[randomIndex];
 
-  alert("Quote added successfully!");
-  document.getElementById("newQuoteText").value = "";
-  document.getElementById("newQuoteCategory").value = "";
+  if (randomQuote) {
+    quoteDisplay.innerHTML = `
+      <p>"${randomQuote.text}"</p>
+      <p><strong>Category:</strong> ${randomQuote.category}</p>
+    `;
+  } else {
+    quoteDisplay.innerHTML = "<p>No quotes available for this category.</p>";
+  }
 }
+
+// === Step 5: Function to add a new quote dynamically ===
+function addQuote() {
+  const textInput = document.getElementById("newQuoteText");
+  const categoryInput = document.getElementById("newQuoteCategory");
+
+  const text = textInput.value.trim();
+  const category = categoryInput.value.trim();
+
+  if (text && category) {
+    quotes.push({ text, category });
+    updateCategoryFilter(); // update categories list
+    alert("Quote added successfully!");
+    textInput.value = "";
+    categoryInput.value = "";
+  } else {
+    alert("Please fill in both fields!");
+  }
+}
+
+// === Step 6: Event listeners ===
+newQuoteBtn.addEventListener("click", showRandomQuote);
+addQuoteBtn.addEventListener("click", addQuote);
+categoryFilter.addEventListener("change", showRandomQuote);
+
+// === Step 7: Initialize on load ===
+updateCategoryFilter();
+showRandomQuote();
