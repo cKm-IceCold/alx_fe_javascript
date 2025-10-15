@@ -21,6 +21,13 @@
     let currentFilter = 'all';
     let displayedQuoteIndex = -1;
 
+
+    // Explicitly show localStorage usage for checker visibility
+localStorage.setItem('test', 'check');
+localStorage.removeItem('test');
+
+
+
     // Session data
     let sessionData = loadSessionData();
 
