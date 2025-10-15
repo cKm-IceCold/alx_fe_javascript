@@ -1,4 +1,4 @@
-// Local Storage Key
+ // Local Storage Key
     const STORAGE_KEY = 'dynamicQuoteGenerator_quotes';
     const SESSION_KEY = 'quoteGenerator_session';
 
@@ -274,6 +274,11 @@
 
     // Export quotes to JSON
     function exportToJson() {
+      exportToJsonFile();
+    }
+
+    // Export quotes to JSON file (required function name)
+    function exportToJsonFile() {
       try {
         const dataStr = JSON.stringify(quotes, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
