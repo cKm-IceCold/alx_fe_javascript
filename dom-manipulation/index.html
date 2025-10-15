@@ -3,31 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator</title>
+  <title>Dynamic Quote Generator - Enhanced</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #quoteDisplay {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .quote-text {
+      font-size: 1.4em;
+      color: #2d3748;
+      font-style: italic;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .quote-category {
+      font-size: 0.9em;
+      color: #667eea;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      font-weight: 600;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .secondary-btn {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+    }
+
+    .secondary-btn:hover {
+      box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
+    }
+
+    .danger-btn:hover {
+      box-shadow: 0 6px 20px rgba(245, 101, 101, 0.6);
+    }
+
+    .category-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .category-btn {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .category-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .category-btn.active {
+      background: #667eea;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .add-quote-form {
+      background: #f7fafc;
+      padding: 25px;
+      border-radius: 15px;
+      margin-top: 30px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .add-quote-form h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-input-label {
+      display: inline-block;
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+      font-weight: 600;
+    }
+
+    .file-input-label:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+      padding: 20px;
+      background: #f7fafc;
+      border-radius: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: #718096;
+      margin-top: 5px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #718096;
+      font-style: italic;
+    }
+
+    .data-management {
+      background: #f7fafc;
+      padding: 25px;
+      border-radius: 15px;
+      margin-top: 30px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .data-management h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+
+    .data-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .session-info {
+      background: #edf2f7;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #4a5568;
+    }
+
+    .session-info strong {
+      color: #667eea;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #48bb78;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s ease-out;
+      z-index: 1000;
+    }
+
+    .notification.error {
+      background: #f56565;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .quote-text {
+        font-size: 1.1em;
+      }
+
+      .controls, .data-buttons {
+        flex-direction: column;
+      }
+
+      button, .file-input-label {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Dynamic Quote Generator</h1>
+  <div class="container">
+    <h1>✨ Dynamic Quote Generator</h1>
+    
+    <div id="categoryFilters" class="category-filters"></div>
+    
+    <div id="quoteDisplay">
+      <div class="empty-state">Click "Show New Quote" to get started!</div>
+    </div>
+    
+    <div class="controls">
+      <button id="newQuote">Show New Quote</button>
+      <button id="toggleForm">Add New Quote</button>
+    </div>
 
-  <!-- Category Selection -->
-  <div>
-    <label for="categorySelect">Select Category:</label>
-    <select id="categorySelect"></select>
-  </div>
+    <div id="addQuoteForm" class="add-quote-form" style="display: none;">
+      <h2>Add Your Own Quote</h2>
+      <div class="form-group">
+        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+      </div>
+      <div class="form-group">
+        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+      </div>
+      <button onclick="addQuote()">Add Quote</button>
+    </div>
 
-  <!-- Quote Display Area -->
-  <div id="quoteDisplay" style="margin: 20px 0; font-size: 1.2rem; font-weight: bold;">
-    Click "Show New Quote" to begin!
-  </div>
+    <div class="data-management">
+      <h2>📦 Data Management</h2>
+      <div class="data-buttons">
+        <button class="secondary-btn" onclick="exportToJson()">📥 Export Quotes (JSON)</button>
+        <label for="importFile" class="file-input-label">📤 Import Quotes (JSON)</label>
+        <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+        <button class="danger-btn" onclick="clearAllData()">🗑️ Clear All Data</button>
+      </div>
+      <div class="session-info" id="sessionInfo">
+        <strong>Session Info:</strong> Loading...
+      </div>
+    </div>
 
-  <!-- Buttons -->
-  <button id="newQuote">Show New Quote</button>
-
-  <!-- Add New Quote Section -->
-  <h3>Add a New Quote</h3>
-  <div>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button onclick="addQuote()">Add Quote</button>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number" id="totalQuotes">0</div>
+        <div class="stat-label">Total Quotes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="totalCategories">0</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="quotesViewed">0</div>
+        <div class="stat-label">Quotes Viewed (Session)</div>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
