@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator - Enhanced with Filtering</title>
+  <title>Dynamic Quote Generator - Server Sync Edition</title>
   <style>
     * {
       margin: 0;
@@ -26,20 +27,14 @@
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 40px;
-      max-width: 800px;
+      max-width: 900px;
       width: 100%;
       animation: fadeIn 0.5s ease-in;
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -48,6 +43,74 @@
       margin-bottom: 30px;
       font-size: 2.5em;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sync-status {
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 2px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sync-status-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .sync-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #48bb78;
+      animation: pulse 2s infinite;
+    }
+
+    .sync-indicator.syncing {
+      background: #ed8936;
+      animation: pulse 0.5s infinite;
+    }
+
+    .sync-indicator.error {
+      background: #f56565;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .sync-text {
+      font-size: 0.9em;
+      color: #4a5568;
+    }
+
+    .sync-text strong {
+      color: #667eea;
+    }
+
+    .sync-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .sync-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .filter-section {
@@ -81,10 +144,6 @@
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    select:hover {
-      border-color: #667eea;
     }
 
     #quoteDisplay {
@@ -143,6 +202,12 @@
 
     button:active {
       transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .secondary-btn {
@@ -324,10 +389,19 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       animation: slideIn 0.3s ease-out;
       z-index: 1000;
+      max-width: 350px;
     }
 
     .notification.error {
       background: #f56565;
+    }
+
+    .notification.warning {
+      background: #ed8936;
+    }
+
+    .notification.info {
+      background: #4299e1;
     }
 
     @keyframes slideIn {
@@ -341,6 +415,55 @@
       }
     }
 
+    .conflict-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .conflict-content {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .conflict-content h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .conflict-item {
+      background: #f7fafc;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      border-left: 4px solid #ed8936;
+    }
+
+    .conflict-item strong {
+      color: #667eea;
+    }
+
+    .conflict-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
     .filter-info {
       background: #edf2f7;
       padding: 10px 15px;
@@ -348,9 +471,6 @@
       margin-top: 10px;
       font-size: 0.9em;
       color: #4a5568;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     .filter-info strong {
@@ -370,12 +490,17 @@
         font-size: 1.1em;
       }
 
-      .controls, .data-buttons {
+      .controls, .data-buttons, .conflict-buttons {
         flex-direction: column;
       }
 
       button, .file-input-label {
         width: 100%;
+      }
+
+      .sync-status {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -384,12 +509,22 @@
   <div class="container">
     <h1>✨ Dynamic Quote Generator</h1>
     
+    <!-- Sync Status Bar -->
+    <div class="sync-status">
+      <div class="sync-status-left">
+        <div class="sync-indicator" id="syncIndicator"></div>
+        <div class="sync-text" id="syncText">
+          <strong>Status:</strong> Ready to sync
+        </div>
+      </div>
+      <button class="sync-button" id="manualSyncBtn" onclick="manualSync()">🔄 Sync Now</button>
+    </div>
+
     <!-- Category Filter Dropdown -->
     <div class="filter-section">
       <h3>🔍 Filter by Category</h3>
       <select id="categoryFilter" onchange="filterQuotes()">
         <option value="all">All Categories</option>
-        <!-- Dynamically populated categories -->
       </select>
       <div class="filter-info" id="filterInfo">
         <strong>Active Filter:</strong> <span id="activeFilterName">All Categories</span>
@@ -422,8 +557,8 @@
     <div class="data-management">
       <h2>📦 Data Management</h2>
       <div class="data-buttons">
-        <button class="secondary-btn" id="exportQuotes" onclick="exportToJsonFile()">📥 Export Quotes (JSON)</button>
-        <label for="importFile" class="file-input-label">📤 Import Quotes (JSON)</label>
+        <button class="secondary-btn" id="exportQuotes" onclick="exportToJsonFile()">📥 Export Quotes</button>
+        <label for="importFile" class="file-input-label">📤 Import Quotes</label>
         <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
         <button class="danger-btn" onclick="clearAllData()">🗑️ Clear All Data</button>
       </div>
@@ -443,7 +578,11 @@
       </div>
       <div class="stat-item">
         <div class="stat-number" id="quotesViewed">0</div>
-        <div class="stat-label">Quotes Viewed (Session)</div>
+        <div class="stat-label">Quotes Viewed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="lastSync">Never</div>
+        <div class="stat-label">Last Sync</div>
       </div>
     </div>
   </div>
