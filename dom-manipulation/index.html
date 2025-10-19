@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator - Server Sync Edition</title>
+  <title>Dynamic Quote Generator - Server Sync</title>
   <style>
     * {
       margin: 0;
@@ -17,9 +18,6 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     .container {
@@ -28,7 +26,7 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 40px;
       max-width: 900px;
-      width: 100%;
+      margin: 0 auto;
       animation: fadeIn 0.5s ease-in;
     }
 
@@ -54,11 +52,9 @@
       align-items: center;
       justify-content: space-between;
       border: 2px solid #e2e8f0;
-      flex-wrap: wrap;
-      gap: 10px;
     }
 
-    .sync-status-left {
+    .sync-info {
       display: flex;
       align-items: center;
       gap: 15px;
@@ -69,22 +65,20 @@
       height: 12px;
       border-radius: 50%;
       background: #48bb78;
-      animation: pulse 2s infinite;
     }
 
     .sync-indicator.syncing {
       background: #ed8936;
-      animation: pulse 0.5s infinite;
+      animation: pulse 1s infinite;
     }
 
     .sync-indicator.error {
       background: #f56565;
-      animation: none;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.1); }
     }
 
     .sync-text {
@@ -92,25 +86,27 @@
       color: #4a5568;
     }
 
-    .sync-text strong {
-      color: #667eea;
-    }
-
-    .sync-button {
+    button {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      padding: 8px 20px;
+      padding: 10px 20px;
       border-radius: 20px;
-      font-size: 0.9em;
+      font-size: 0.95em;
       cursor: pointer;
       transition: all 0.3s ease;
       font-weight: 600;
     }
 
-    .sync-button:hover {
+    button:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .filter-section {
@@ -135,7 +131,6 @@
       font-size: 1em;
       background: white;
       cursor: pointer;
-      transition: all 0.3s ease;
       font-family: inherit;
       color: #2d3748;
     }
@@ -155,8 +150,6 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
     }
 
     .quote-text {
@@ -182,80 +175,12 @@
       flex-wrap: wrap;
     }
 
-    button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 25px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      font-weight: 600;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
     .secondary-btn {
       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
-    }
-
-    .secondary-btn:hover {
-      box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
     }
 
     .danger-btn {
       background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-      box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
-    }
-
-    .danger-btn:hover {
-      box-shadow: 0 6px 20px rgba(245, 101, 101, 0.6);
-    }
-
-    .category-filters {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .category-btn {
-      background: white;
-      color: #667eea;
-      border: 2px solid #667eea;
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 0.9em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-
-    .category-btn:hover {
-      background: #667eea;
-      color: white;
-    }
-
-    .category-btn.active {
-      background: #667eea;
-      color: white;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .add-quote-form {
@@ -264,6 +189,7 @@
       border-radius: 15px;
       margin-top: 30px;
       border: 2px solid #e2e8f0;
+      display: none;
     }
 
     .add-quote-form h2 {
@@ -282,7 +208,6 @@
       border: 2px solid #e2e8f0;
       border-radius: 10px;
       font-size: 1em;
-      transition: all 0.3s ease;
       font-family: inherit;
     }
 
@@ -300,18 +225,11 @@
       display: inline-block;
       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
       color: white;
-      padding: 12px 25px;
-      border-radius: 25px;
-      font-size: 1em;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.95em;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
       font-weight: 600;
-    }
-
-    .file-input-label:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
     }
 
     .stats {
@@ -321,6 +239,8 @@
       padding: 20px;
       background: #f7fafc;
       border-radius: 15px;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .stat-item {
@@ -365,19 +285,6 @@
       flex-wrap: wrap;
     }
 
-    .session-info {
-      background: #edf2f7;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      font-size: 0.9em;
-      color: #4a5568;
-    }
-
-    .session-info strong {
-      color: #667eea;
-    }
-
     .notification {
       position: fixed;
       top: 20px;
@@ -392,27 +299,13 @@
       max-width: 350px;
     }
 
-    .notification.error {
-      background: #f56565;
-    }
-
-    .notification.warning {
-      background: #ed8936;
-    }
-
-    .notification.info {
-      background: #4299e1;
-    }
+    .notification.error { background: #f56565; }
+    .notification.warning { background: #ed8936; }
+    .notification.info { background: #4299e1; }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     .conflict-modal {
@@ -426,7 +319,6 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
-      animation: fadeIn 0.3s ease-out;
     }
 
     .conflict-content {
@@ -437,7 +329,6 @@
       width: 90%;
       max-height: 80vh;
       overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
 
     .conflict-content h2 {
@@ -446,11 +337,16 @@
     }
 
     .conflict-item {
-      background: #f7fafc;
+      background: #fff5f5;
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 15px;
-      border-left: 4px solid #ed8936;
+      border-left: 4px solid #f56565;
+    }
+
+    .conflict-item p {
+      margin: 5px 0;
+      font-size: 0.9em;
     }
 
     .conflict-item strong {
@@ -464,44 +360,12 @@
       flex-wrap: wrap;
     }
 
-    .filter-info {
-      background: #edf2f7;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-top: 10px;
-      font-size: 0.9em;
-      color: #4a5568;
-    }
-
-    .filter-info strong {
-      color: #667eea;
-    }
-
     @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 1.8em;
-      }
-
-      .quote-text {
-        font-size: 1.1em;
-      }
-
-      .controls, .data-buttons, .conflict-buttons {
-        flex-direction: column;
-      }
-
-      button, .file-input-label {
-        width: 100%;
-      }
-
-      .sync-status {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      .container { padding: 20px; }
+      h1 { font-size: 1.8em; }
+      .sync-status { flex-direction: column; gap: 10px; }
+      .controls, .data-buttons { flex-direction: column; }
+      button, .file-input-label { width: 100%; }
     }
   </style>
 </head>
@@ -509,41 +373,36 @@
   <div class="container">
     <h1>✨ Dynamic Quote Generator</h1>
     
-    <!-- Sync Status Bar -->
+    <!-- Sync Status -->
     <div class="sync-status">
-      <div class="sync-status-left">
+      <div class="sync-info">
         <div class="sync-indicator" id="syncIndicator"></div>
-        <div class="sync-text" id="syncText">
-          <strong>Status:</strong> Ready to sync
-        </div>
+        <div class="sync-text" id="syncText">Status: Ready</div>
       </div>
-      <button class="sync-button" id="manualSyncBtn" onclick="manualSync()">🔄 Sync Now</button>
+      <button id="manualSyncBtn" onclick="syncWithServer()">🔄 Sync Now</button>
     </div>
 
-    <!-- Category Filter Dropdown -->
+    <!-- Category Filter -->
     <div class="filter-section">
       <h3>🔍 Filter by Category</h3>
       <select id="categoryFilter" onchange="filterQuotes()">
         <option value="all">All Categories</option>
       </select>
-      <div class="filter-info" id="filterInfo">
-        <strong>Active Filter:</strong> <span id="activeFilterName">All Categories</span>
-      </div>
     </div>
 
-    <!-- Quick Category Buttons -->
-    <div id="categoryFilters" class="category-filters"></div>
-    
+    <!-- Quote Display -->
     <div id="quoteDisplay">
       <div class="empty-state">Click "Show New Quote" to get started!</div>
     </div>
     
+    <!-- Controls -->
     <div class="controls">
-      <button id="newQuote">Show New Quote</button>
-      <button id="toggleForm">Add New Quote</button>
+      <button id="newQuote" onclick="showRandomQuote()">Show New Quote</button>
+      <button id="toggleForm" onclick="toggleAddQuoteForm()">Add New Quote</button>
     </div>
 
-    <div id="addQuoteForm" class="add-quote-form" style="display: none;">
+    <!-- Add Quote Form -->
+    <div id="addQuoteForm" class="add-quote-form">
       <h2>Add Your Own Quote</h2>
       <div class="form-group">
         <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
@@ -554,19 +413,18 @@
       <button onclick="addQuote()">Add Quote</button>
     </div>
 
+    <!-- Data Management -->
     <div class="data-management">
       <h2>📦 Data Management</h2>
       <div class="data-buttons">
-        <button class="secondary-btn" id="exportQuotes" onclick="exportToJsonFile()">📥 Export Quotes</button>
-        <label for="importFile" class="file-input-label">📤 Import Quotes</label>
+        <button class="secondary-btn" id="exportQuotes" onclick="exportToJsonFile()">📥 Export</button>
+        <label for="importFile" class="file-input-label">📤 Import</label>
         <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-        <button class="danger-btn" onclick="clearAllData()">🗑️ Clear All Data</button>
-      </div>
-      <div class="session-info" id="sessionInfo">
-        <strong>Session Info:</strong> Loading...
+        <button class="danger-btn" onclick="clearAllData()">🗑️ Clear Data</button>
       </div>
     </div>
 
+    <!-- Statistics -->
     <div class="stats">
       <div class="stat-item">
         <div class="stat-number" id="totalQuotes">0</div>
@@ -578,14 +436,15 @@
       </div>
       <div class="stat-item">
         <div class="stat-number" id="quotesViewed">0</div>
-        <div class="stat-label">Quotes Viewed</div>
+        <div class="stat-label">Viewed</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number" id="lastSync">Never</div>
+        <div class="stat-number" id="lastSyncTime">Never</div>
         <div class="stat-label">Last Sync</div>
       </div>
     </div>
   </div>
+
 
   <script src="script.js"></script>
 </body>
