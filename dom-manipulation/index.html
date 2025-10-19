@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator - Enhanced</title>
+  <title>Dynamic Quote Generator - Enhanced with Filtering</title>
   <style>
     * {
       margin: 0;
@@ -48,6 +48,43 @@
       margin-bottom: 30px;
       font-size: 2.5em;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-section {
+      background: #f7fafc;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .filter-section h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1em;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      color: #2d3748;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    select:hover {
+      border-color: #667eea;
     }
 
     #quoteDisplay {
@@ -304,6 +341,22 @@
       }
     }
 
+    .filter-info {
+      background: #edf2f7;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #4a5568;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-info strong {
+      color: #667eea;
+    }
+
     @media (max-width: 600px) {
       .container {
         padding: 20px;
@@ -331,6 +384,19 @@
   <div class="container">
     <h1>✨ Dynamic Quote Generator</h1>
     
+    <!-- Category Filter Dropdown -->
+    <div class="filter-section">
+      <h3>🔍 Filter by Category</h3>
+      <select id="categoryFilter" onchange="filterQuotes()">
+        <option value="all">All Categories</option>
+        <!-- Dynamically populated categories -->
+      </select>
+      <div class="filter-info" id="filterInfo">
+        <strong>Active Filter:</strong> <span id="activeFilterName">All Categories</span>
+      </div>
+    </div>
+
+    <!-- Quick Category Buttons -->
     <div id="categoryFilters" class="category-filters"></div>
     
     <div id="quoteDisplay">
@@ -356,7 +422,7 @@
     <div class="data-management">
       <h2>📦 Data Management</h2>
       <div class="data-buttons">
-        <button class="secondary-btn" onclick="exportToJson()">📥 Export Quotes (JSON)</button>
+        <button class="secondary-btn" id="exportQuotes" onclick="exportToJsonFile()">📥 Export Quotes (JSON)</button>
         <label for="importFile" class="file-input-label">📤 Import Quotes (JSON)</label>
         <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
         <button class="danger-btn" onclick="clearAllData()">🗑️ Clear All Data</button>
@@ -381,7 +447,6 @@
       </div>
     </div>
   </div>
-
 
   <script src="script.js"></script>
 </body>
